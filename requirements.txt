@@ -1,0 +1,11 @@
+tensorflow
+numpy 
+flask
+pandas
+gunicorn
+yfinance
+flask_socketio
+scikit-learn
+keras
+time
+
