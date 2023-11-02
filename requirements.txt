@@ -7,5 +7,4 @@ yfinance
 flask_socketio
 scikit-learn
 keras
-time
 
