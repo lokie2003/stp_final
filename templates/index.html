@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Price Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('background-image.jpg'); /* Replace with your background image URL */
+            background-color: black; /* Fallback background color */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white; /* Text color */
+        }
+
+        .price-box {
+            background-color: red; /* Red background color */
+            color: white; /* White text color */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Box shadow for depth */
+            text-align: center;
+            animation: fadeIn 2s; /* Example fade-in animation */
+        }
+
+        h1, h2 {
+            text-transform: uppercase; /* Uppercase text for headings */
+        }
+
+        #predictions {
+            font-size: 18px;
+        }
+
+        #predict_button {
+            background-color: red; /* Red background color for the button */
+            color: white; /* White text color for the button */
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth color transition on hover */
+        }
+
+        #predict_button:hover {
+            background-color: darkred; /* Darker red color on hover */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('update_data', function(data) {
+            $('#last_price').text(data.last_price.join(', '));
+            $('#predicted_prices').text(data.predicted_prices.join(', '));
+        });
+
+        $('#predict_button').click(function() {
+            socket.emit('predict_prices', { predict: true });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="price-box">
+                    <h1>Last Day's Stock Price</h1>
+                </div>
+                <div class="price-box">
+                    <h2>Stock Price</h2>
+                    <p id="last_price"></p>
+                </div>
+                <div class="price-box">
+                    <h2>Predicted Stock Prices</h2>
+                    <p id="predicted_prices"></p>
+                    <button type="button" id="predict_button">Predict</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

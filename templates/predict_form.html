@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- ... (other HTML head content) ... -->
+</head>
+<body>
+    <form method="POST" id="prediction-form">
+        <h2>Stock Price Prediction</h2>
+        <div id="input-values-container">
+            <label for="input1">Day 1:</label>
+            <input type="text" name="input1" id="input1" readonly>
+            <label for="input2">Day 2:</label>
+            <input type="text" name="input2" id="input2" readonly>
+            <label for="input3">Day 3:</label>
+            <input type="text" name="input3" id="input3" readonly>
+            <label for="input4">Day 4:</label>
+            <input type="text" name="input4" id="input4" readonly>
+            <label for="input5">Day 5:</label>
+            <input type="text" name="input5" id="input5" readonly>
+        </div>
+        
+        <button type="button" id="predict-button">Predict</button>
+        <div id="predicted-price"></div>
+    </form>
+    
+    <!-- Include Socket.io JavaScript library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+        
+        // Function to update the input values on the page
+        function updateInputValues(inputValues) {
+            for (var i = 0; i < inputValues.length; i++) {
+                var inputField = document.getElementById('input' + (i + 1));
+                if (inputField) {
+                    inputField.value = inputValues[i];
+                }
+            }
+        }
+
+        socket.on('connect', function() {
+            console.log('Client connected');
+        });
+
+        socket.on('update_data', function(data) {
+            var inputValues = data.input_values;
+            updateInputValues(inputValues);
+        });
+
+        var predictButton = document.getElementById('predict-button');
+        predictButton.addEventListener('click', function() {
+            socket.emit('predict', {}, namespace='/test');
+        });
+
+        socket.on('predicted_price', function(data) {
+            var predictedPriceElement = document.getElementById('predicted-price');
+            predictedPriceElement.innerHTML = 'Predicted Price: ' + data.predicted_price;
+        });
+    </script>
+</body>
+</html>
